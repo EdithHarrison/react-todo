@@ -1,25 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TodoList from './TodoList';
 import AddTodoForm from './AddTodoForm';
 
-function App() {
-  const [todos, setTodos] = useState([
-    { id: 1, title: 'The Little Mermaid' },
-    { id: 2, title: 'Toy Story' },
-    { id: 3, title: 'Moana' }
-  ]);
+function useSemiPersistentState() {
+  const savedTodoList = JSON.parse(localStorage.getItem("savedTodoList")) || [];
+  const [todoList, setTodoList] = useState(savedTodoList);
 
-  const handleAddTodo = (title) => {
-    const newTodo = { id: todos.length + 1, title };
-    setTodos([...todos, newTodo]);
+  useEffect(() => {
+    localStorage.setItem("savedTodoList", JSON.stringify(todoList));
+  }, [todoList]);
+
+  return [todoList, setTodoList];
+}
+
+function App() {
+  const [todoList, setTodoList] = useSemiPersistentState();
+
+  const addTodo = (newTodo) => {
+    setTodoList((prevTodoList) => [...prevTodoList, newTodo]);
   };
 
   return (
-    <div>
+    <>
       <h1>Favorite Disney Movies</h1>
-      <AddTodoForm onAddTodo={handleAddTodo} />
-      <TodoList todos={todos} />
-    </div>
+      <AddTodoForm onAddTodo={addTodo} />
+      <TodoList todoList={todoList} />
+    </>
   );
 }
 
