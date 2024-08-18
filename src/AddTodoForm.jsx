@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import InputWithLabel from './InputWithLabel';
 
 const AddTodoForm = ({ onAddTodo }) => {
   const [todoTitle, setTodoTitle] = useState('');
@@ -10,14 +11,25 @@ const AddTodoForm = ({ onAddTodo }) => {
 
   const handleAddTodo = (event) => {
     event.preventDefault();
+
+    // Check if the title is not empty before adding the todo
+    if (todoTitle.trim() === '') {
+      alert('Todo title cannot be empty');
+      return;
+    }
+
     onAddTodo({ id: Date.now(), title: todoTitle });
-    setTodoTitle('');
+    setTodoTitle('');  // Clear the input field
   };
 
   return (
     <form onSubmit={handleAddTodo}>
-      <label htmlFor="todoTitle">Title</label>
-      <input type="text" id="todoTitle" name="title" value={todoTitle} onChange={handleTitleChange} />
+      <InputWithLabel
+        todoTitle={todoTitle}
+        handleTitleChange={handleTitleChange}
+      >
+        Title
+      </InputWithLabel>
       <button type="submit">Add</button>
     </form>
   );
