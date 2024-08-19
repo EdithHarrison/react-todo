@@ -2,33 +2,49 @@ import React, { useState, useEffect } from 'react';
 import TodoList from './TodoList';
 import AddTodoForm from './AddTodoForm';
 
-function useSemiPersistentState() {
-  const savedTodoList = JSON.parse(localStorage.getItem("savedTodoList")) || [];
-  const [todoList, setTodoList] = useState(savedTodoList);
+function App() {
+  const [todoList, setTodoList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    localStorage.setItem("savedTodoList", JSON.stringify(todoList));
-  }, [todoList]);
+    const fetchData = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const savedTodoList = JSON.parse(localStorage.getItem("savedTodoList")) || [];
+        resolve({
+          data: {
+            todoList: savedTodoList.length > 0 ? savedTodoList : [
+              { id: 1, title: 'The Little Mermaid' },
+              { id: 2, title: 'Toy Story' },
+              { id: 3, title: 'Moana' },
+            ],
+          },
+        });
+      }, 2000);
+    });
 
-  return [todoList, setTodoList];
-}
+    fetchData.then(result => {
+      setTodoList(result.data.todoList);
+      setIsLoading(false);
+    });
+  }, []);
 
-function App() {
-  const [todoList, setTodoList] = useSemiPersistentState();
+  useEffect(() => {
+    if (!isLoading) {
+      localStorage.setItem('savedTodoList', JSON.stringify(todoList));
+    }
+  }, [todoList, isLoading]);
 
-  const addTodo = (newTodo) => {
-    setTodoList((prevTodoList) => [...prevTodoList, newTodo]);
-  };
-
-  const removeTodo = (id) => {
-    setTodoList((prevTodoList) => prevTodoList.filter(todo => todo.id !== id));
+  // Function to handle removal of a todo
+  const removeTodo = id => {
+    const updatedTodoList = todoList.filter(todo => todo.id !== id);
+    setTodoList(updatedTodoList);
   };
 
   return (
     <>
       <h1>Favorite Disney Movies</h1>
-      <AddTodoForm onAddTodo={addTodo} />
-      <TodoList todoList={todoList} onRemoveTodo={removeTodo} />
+      <AddTodoForm onAddTodo={newTodo => setTodoList([...todoList, newTodo])} />
+      {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} />}
     </>
   );
 }
