@@ -34,11 +34,17 @@ function App() {
     }
   }, [todoList, isLoading]);
 
+  // Function to handle removal of a todo
+  const removeTodo = id => {
+    const updatedTodoList = todoList.filter(todo => todo.id !== id);
+    setTodoList(updatedTodoList);
+  };
+
   return (
     <>
       <h1>Favorite Disney Movies</h1>
       <AddTodoForm onAddTodo={newTodo => setTodoList([...todoList, newTodo])} />
-      {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} />}
+      {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={removeTodo} />}
     </>
   );
 }
