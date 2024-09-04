@@ -1,25 +1,68 @@
 import React, { useState } from 'react';
 import InputWithLabel from './InputWithLabel';
 
+// Airtable API URL and Token
+const AIRTABLE_API_URL = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/Default`;
+const AIRTABLE_API_KEY = import.meta.env.VITE_AIRTABLE_API_TOKEN;
+
 const AddTodoForm = ({ onAddTodo }) => {
   const [todoTitle, setTodoTitle] = useState('');
 
   const handleTitleChange = (event) => {
-    const newTodoTitle = event.target.value;
-    setTodoTitle(newTodoTitle);
+    setTodoTitle(event.target.value);
   };
 
-  const handleAddTodo = (event) => {
+  const postTodo = async (todo) => {
+    try {
+      const airtableData = {
+        fields: {
+          title: todo,
+        },
+      };
+
+      const response = await fetch(AIRTABLE_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${AIRTABLE_API_KEY}`,
+        },
+        body: JSON.stringify(airtableData),
+      });
+
+      if (!response.ok) {
+        const message = `Error: ${response.status}`;
+        throw new Error(message);
+      }
+
+      const dataResponse = await response.json();
+      return dataResponse;
+    } catch (error) {
+      console.log(error.message);
+      return null;
+    }
+  };
+
+  const handleAddTodo = async (event) => {
     event.preventDefault();
 
-    // Check if the title is not empty before adding the todo
     if (todoTitle.trim() === '') {
       alert('Todo title cannot be empty');
       return;
     }
 
-    onAddTodo({ id: Date.now(), title: todoTitle });
-    setTodoTitle('');  // Clear the input field
+    // Send new todo to Airtable
+    const newTodoFromAirtable = await postTodo(todoTitle);
+    
+    if (newTodoFromAirtable) {
+      const newTodo = {
+        id: newTodoFromAirtable.id,
+        title: newTodoFromAirtable.fields.title,
+      };
+      
+      // Update parent component with new todo
+      onAddTodo(newTodo);
+      setTodoTitle(''); // Clear the input field
+    }
   };
 
   return (
@@ -30,7 +73,7 @@ const AddTodoForm = ({ onAddTodo }) => {
       >
         Title
       </InputWithLabel>
-      <button type="submit">Add</button>
+      <button type="submit">Add Todo</button>
     </form>
   );
 };
