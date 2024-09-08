@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom'; 
 import TodoList from './TodoList';
 import AddTodoForm from './AddTodoForm';
 
@@ -73,11 +74,21 @@ function App() {
   }, []);
 
   return (
-    <>
-      <h1>Favorite Disney Movies</h1>
-      <AddTodoForm onAddTodo={newTodo => setTodoList([...todoList, newTodo])} />
-      {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={handleDeleteTodo} />}
-    </>
+    <BrowserRouter>
+      <Routes>
+        {/* Root Route - This will display Disney Movie List */}
+        <Route path="/" element={
+          <>
+            <h1>Favorite Disney Movies</h1>
+            <AddTodoForm onAddTodo={newTodo => setTodoList([...todoList, newTodo])} />
+            {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={handleDeleteTodo} />}
+          </>
+        } />
+
+        {/* New Route - Display a simple heading */}
+        <Route path="/new" element={<h1>Favorite Marvel Movies</h1>} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
