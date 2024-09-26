@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import InputWithLabel from './InputWithLabel';
+import styles from './AddTodoForm.module.css';
 
-// Airtable API URL and Token
 const AIRTABLE_API_URL = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/Default`;
 const AIRTABLE_API_KEY = import.meta.env.VITE_AIRTABLE_API_TOKEN;
 
@@ -66,14 +65,15 @@ const AddTodoForm = ({ onAddTodo }) => {
   };
 
   return (
-    <form onSubmit={handleAddTodo}>
-      <InputWithLabel
-        todoTitle={todoTitle}
-        handleTitleChange={handleTitleChange}
-      >
-        Title
-      </InputWithLabel>
-      <button type="submit">Add Todo</button>
+    <form onSubmit={handleAddTodo} className={styles.form}>
+      <input
+        type="text"
+        value={todoTitle}
+        onChange={handleTitleChange}
+        placeholder="Enter a Disney movie"
+        className={styles.input}
+      />
+      <button type="submit" className={styles.addButton}>ADD</button>
     </form>
   );
 };
