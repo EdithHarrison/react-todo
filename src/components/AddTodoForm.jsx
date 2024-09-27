@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types'; 
 import styles from './AddTodoForm.module.css';
 
 const AIRTABLE_API_URL = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/Default`;
@@ -76,6 +77,11 @@ const AddTodoForm = ({ onAddTodo }) => {
       <button type="submit" className={styles.addButton}>ADD</button>
     </form>
   );
+};
+
+// PropTypes definition
+AddTodoForm.propTypes = {
+  onAddTodo: PropTypes.func.isRequired, 
 };
 
 export default AddTodoForm;
