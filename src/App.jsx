@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom'; 
-import TodoList from './TodoList';
-import AddTodoForm from './AddTodoForm';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import TodoList from './components/TodoList';
+import AddTodoForm from './components/AddTodoForm';
+import styles from './App.module.css';
+import bannerImage from './assets/banner.svg'; 
 
 // Airtable API URL and token
 const AIRTABLE_API_URL = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
@@ -38,7 +40,7 @@ function App() {
       setTodoList(todos);
       setIsLoading(false);
     } catch (error) {
-      console.log("Error fetching todos:", error.message);
+      console.log('Error fetching todos:', error.message);
       setIsLoading(false);
     }
   };
@@ -46,7 +48,7 @@ function App() {
   // Handle the delete operation (removing a todo)
   const handleDeleteTodo = async (id) => {
     try {
-      const deleteUrl = `${AIRTABLE_API_URL}/${id}`;  // URL for deleting the todo
+      const deleteUrl = `${AIRTABLE_API_URL}/${id}`;  
 
       const options = {
         method: 'DELETE',
@@ -65,7 +67,7 @@ function App() {
       // Remove the todo from the local state after successful deletion
       setTodoList(todoList.filter(todo => todo.id !== id));
     } catch (error) {
-      console.log("Error deleting todo:", error.message);
+      console.log('Error deleting todo:', error.message);
     }
   };
 
@@ -73,18 +75,27 @@ function App() {
     fetchData();
   }, []);
 
+  const DisneyMovieList = () => (
+    <div className={styles.app}>
+      <div className={styles.banner} style={{ backgroundImage: `url(${bannerImage})` }}>
+        <h1 className={styles.title}>Favorite Disney Movies</h1>
+        <AddTodoForm onAddTodo={newTodo => setTodoList([...todoList, newTodo])} />
+      </div>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <div className={styles.listContainer}>
+          <TodoList todoList={todoList} onRemoveTodo={handleDeleteTodo} />
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <BrowserRouter>
       <Routes>
         {/* Root Route - This will display Disney Movie List */}
-        <Route path="/" element={
-          <>
-            <h1>Favorite Disney Movies</h1>
-            <AddTodoForm onAddTodo={newTodo => setTodoList([...todoList, newTodo])} />
-            {isLoading ? <p>Loading...</p> : <TodoList todoList={todoList} onRemoveTodo={handleDeleteTodo} />}
-          </>
-        } />
-
+        <Route path="/" element={<DisneyMovieList />} />
         {/* New Route - Display a simple heading */}
         <Route path="/new" element={<h1>Favorite Marvel Movies</h1>} />
       </Routes>
