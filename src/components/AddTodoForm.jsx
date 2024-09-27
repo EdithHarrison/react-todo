@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types'; 
 import styles from './AddTodoForm.module.css';
 
-const AIRTABLE_API_URL = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/Default`;
+const AIRTABLE_API_URL = `https://api.airtable.com/v0/${import.meta.env.VITE_AIRTABLE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
 const AIRTABLE_API_KEY = import.meta.env.VITE_AIRTABLE_API_TOKEN;
 
 const AddTodoForm = ({ onAddTodo }) => {
@@ -14,9 +14,14 @@ const AddTodoForm = ({ onAddTodo }) => {
 
   const postTodo = async (todo) => {
     try {
+      // Format the date as YYYY-MM-DD
+      const today = new Date();
+      const formattedDate = today.toISOString().split('T')[0];
+
       const airtableData = {
         fields: {
           title: todo,
+          completedAt: formattedDate, // Use the formatted date string
         },
       };
 
@@ -30,14 +35,15 @@ const AddTodoForm = ({ onAddTodo }) => {
       });
 
       if (!response.ok) {
-        const message = `Error: ${response.status}`;
-        throw new Error(message);
+        const errorData = await response.json();
+        console.error('Airtable error:', errorData);
+        throw new Error(`Error: ${response.status} - ${errorData.error.message}`);
       }
 
       const dataResponse = await response.json();
       return dataResponse;
     } catch (error) {
-      console.log(error.message);
+      console.error('Error posting todo:', error.message);
       return null;
     }
   };
@@ -57,6 +63,7 @@ const AddTodoForm = ({ onAddTodo }) => {
       const newTodo = {
         id: newTodoFromAirtable.id,
         title: newTodoFromAirtable.fields.title,
+        completedAt: newTodoFromAirtable.fields.completedAt,
       };
       
       // Update parent component with new todo
