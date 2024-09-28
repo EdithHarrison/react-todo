@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import AddTodoForm from './AddTodoForm';
-import TodoList from './TodoList';
+import AddTodoForm from '../AddTodoForm/AddTodoForm';
+import TodoList from '../TodoList/TodoList';
 import styles from './TodoContainer.module.css';
 import { FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types'; 
-import TodoListItem from './TodoListItem';
+import TodoListItem from '../TodoListItem/TodoListItem';
 import styles from './TodoList.module.css';
 
 const TodoList = ({ todoList, onRemoveTodo }) => {
