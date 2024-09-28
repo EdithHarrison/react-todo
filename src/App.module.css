@@ -12,11 +12,13 @@
 
 .banner {
   background-image: url('./assets/banner.svg');
-  background-size: cover;
+  background-size: cover; 
   background-position: center;
+  background-repeat: no-repeat; 
   padding: 4rem;
   color: white;
   text-align: center;
+  height: 600px; 
 }
 
 .title {
@@ -33,6 +35,8 @@
 @media (max-width: 768px) {
   .banner {
     padding: 2rem;
+    height: 500px; 
+    background-size: cover; 
   }
 
   .title {

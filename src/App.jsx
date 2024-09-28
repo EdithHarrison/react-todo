@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import TodoList from './components/TodoList';
-import AddTodoForm from './components/AddTodoForm';
+import TodoContainer from './components/TodoContainer/TodoContainer'; 
 import styles from './App.module.css';
 import bannerImage from './assets/banner.svg'; 
 
@@ -35,8 +34,9 @@ function App() {
       const todos = data.records.map(todo => ({
         id: todo.id,
         title: todo.fields.title,
+        completedAt: todo.fields.completedAt,
       }));
-
+      
       setTodoList(todos);
       setIsLoading(false);
     } catch (error) {
@@ -79,15 +79,13 @@ function App() {
     <div className={styles.app}>
       <div className={styles.banner} style={{ backgroundImage: `url(${bannerImage})` }}>
         <h1 className={styles.title}>Favorite Disney Movies</h1>
-        <AddTodoForm onAddTodo={newTodo => setTodoList([...todoList, newTodo])} />
+        {/* Render TodoContainer component */}
+        <TodoContainer
+          todoList={todoList}
+          onAddTodo={(newTodo) => setTodoList([...todoList, newTodo])}
+          onRemoveTodo={handleDeleteTodo}
+        />
       </div>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
-        <div className={styles.listContainer}>
-          <TodoList todoList={todoList} onRemoveTodo={handleDeleteTodo} />
-        </div>
-      )}
     </div>
   );
 
